@@ -1,0 +1,2 @@
+MAILTO=""
+*/1 * * * *  sudo -u www-data php /magento/bin/magento cron:run >> /tmp/magento-cron.log 2>> /tmp/magento-cron-error.log
