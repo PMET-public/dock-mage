@@ -1,0 +1,12 @@
+{
+    "name": "magentoese/dock-mage",
+    "description": "Launch Magento infrastructure using docker-compose",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Keith Bentrup",
+            "email": "kbentrup@magento.com"
+        }
+    ],
+    "require": {}
+}
