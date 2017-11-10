@@ -5,9 +5,9 @@ services:
     image: pmetpublic/nginx
     restart: always
     #entrypoint: env-subst.sh -- /docker-entrypoint.sh
-#    ports:
-#      - 80:80
-#      - 443:443
+    ports:
+      - 80
+      - 443
     environment:
       - TLD=${TLD}
       - DOMAIN=${DOMAIN}
