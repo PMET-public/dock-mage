@@ -12,9 +12,9 @@ services:
       - TLD=${TLD}
       - DOMAIN=${DOMAIN}
     volumes:
-      - ./services-config/etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./services-config/etc/ssl:/etc/ssl:ro
-      - ./services-scripts:/usr/local/bin:ro
+      - ./etc/nginx/conf.d:/etc/nginx/conf.d
+      - ./etc/ssl:/etc/ssl:ro
+      - ./scripts:/usr/local/bin:ro
 
   redis:
     image: redis
@@ -44,7 +44,7 @@ services:
     # https://github.com/magento/magento2/issues/3897
     command: -f /etc/varnish/default.vcl -p feature=+esi_ignore_https
     volumes:
-      - ./services-config/etc/varnish:/etc/varnish
+      - ./etc/varnish:/etc/varnish
     networks:
       default:
         aliases:
@@ -109,19 +109,18 @@ services:
       working_dir: /app
       volumes:
         # - ${HOME}/.composer:${HOME}/.composer
-        - ./services-config/etc/cron.d/magento:/etc/cron.d/magento
-        - ./services-config/etc/apache2/sites-enabled:/etc/apache2/sites-enabled
+        - ./etc/cron.d/magento:/etc/cron.d/magento
+        - ./etc/apache2/sites-enabled:/etc/apache2/sites-enabled
         # map php ini settings to cli and apache dirs
-        - ./services-config/etc/php/7.0/templates:/etc/php/7.0/apache2/conf.d/templates
-        - ./services-config/etc/php/7.0/apache2/conf.d/apache2.ini:/etc/php/7.0/apache2/conf.d/apache2.ini
-        - ./services-config/etc/php/7.0/opcache.ini:/etc/php/7.0/apache2/conf.d/opcache.ini
-        - ./services-config/etc/php/7.0/templates:/etc/php/7.0/cli/conf.d/templates
-        - ./services-config/etc/php/7.0/cli/conf.d/cli.ini:/etc/php/7.0/cli/conf.d/cli.ini
-        - ./services-config/etc/php/7.0/opcache.ini:/etc/php/7.0/cli/conf.d/opcache.ini
-        - ./services-config/etc/blackfire/templates:/etc/blackfire/templates
-        - ./services-scripts:/usr/local/bin
-        - ./magento-cloud:/app
-        - ..:/parent
+        - ./etc/php/7.0/templates:/etc/php/7.0/apache2/conf.d/templates
+        - ./etc/php/7.0/apache2/conf.d/apache2.ini:/etc/php/7.0/apache2/conf.d/apache2.ini
+        - ./etc/php/7.0/opcache.ini:/etc/php/7.0/apache2/conf.d/opcache.ini
+        - ./etc/php/7.0/templates:/etc/php/7.0/cli/conf.d/templates
+        - ./etc/php/7.0/cli/conf.d/cli.ini:/etc/php/7.0/cli/conf.d/cli.ini
+        - ./etc/php/7.0/opcache.ini:/etc/php/7.0/cli/conf.d/opcache.ini
+        - ./etc/blackfire/templates:/etc/blackfire/templates
+        - ./scripts:/usr/local/bin
+        - ../../../:/app
       networks:
         default:
           aliases:
