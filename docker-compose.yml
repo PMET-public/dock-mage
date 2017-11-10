@@ -103,7 +103,7 @@ services:
         # {"http:\\/\\/m2-b2b-dev.the1umastory.com\\/": {"type": "upstream","original_url": "http:\\/\\/{default}\\/"}}
         - MAGENTO_CLOUD_ROUTES=eyJodHRwOlwvXC9tMi1iMmItZGV2LnRoZTF1bWFzdG9yeS5jb21cLyI6IHsidHlwZSI6ICJ1cHN0cmVhbSIsIm9yaWdpbmFsX3VybCI6ICJodHRwOlwvXC97ZGVmYXVsdH1cLyJ9fQo
       env_file:
-        - project-config/magento-cloud-variables.ini
+        - env/magento-cloud-variables.ini
       ports:
         - 80
       working_dir: /app
