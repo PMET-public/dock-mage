@@ -1,8 +1,8 @@
-backend m2_app_server_internal {
-  .host = "m2-app-server.internal";
+backend app {
+  .host = "app.internal";
   .port = "80";
 }
 
 sub set_backend {
-    set req.backend_hint = m2_app_server_internal;
+    set req.backend_hint = app;
 }
