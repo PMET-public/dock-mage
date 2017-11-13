@@ -1,0 +1,4 @@
+# http://devdocs.magento.com/guides/v2.2/cloud/env/environment-vars_magento.html
+ADMIN_USERNAME: admin
+ADMIN_PASSWORD: admin4tls
+ADMIN_EMAIL: kbentrup@magento.com

@@ -15,6 +15,7 @@ services:
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
       - ./etc/ssl:/etc/ssl:ro
       - ./scripts:/usr/local/bin:ro
+      - /etc/letsencrypt:/etc/letsencrypt
 
   redis:
     image: redis
@@ -71,11 +72,9 @@ services:
       restart: always
       command: wait-for-it.sh database.internal:3306 -- /sbin/my_init
       #command: /bin/bash
+      container_name: ${HOSTNAME}
       environment:
-        - TLD=${TLD}
-        - DOMAIN=${DOMAIN}
         - GITHUB_TOKEN=${GITHUB_TOKEN}
-        - MAGENTO_HOSTNAME=${CONTAINER_NAME}.${DOMAIN}.${TLD}
 #        - COMPOSER_AUTH=${COMPOSER_AUTH}
         - LANG_TO_DEPLOY=${LANG_TO_DEPLOY}
 #        - WARM_CACHE=${WARM_CACHE}
@@ -95,15 +94,12 @@ services:
         # encode: echo '{"json": "string"}' | base64
         # decode: php -r 'print_r(json_decode(base64_decode($_ENV["MAGENTO_CLOUD_RELATIONSHIPS"]))->database);'
         # '{"redis": [{"service": "redis", "ip": "248.0.144.109", "cluster": "xf6pteamwisvy-master", "host": "redis.internal", "rel": "redis", "scheme": "redis", "port": 6379}], "elasticsearch": [{"service": "elasticsearch", "ip": "248.0.145.37", "cluster": "xf6pteamwisvy-master", "host": "elasticsearch.internal", "rel": "elasticsearch", "scheme": "http", "port": 9200}], "mq": [{"username": "guest", "password": "guest", "service": "myrabbitmq", "ip": "248.0.144.110", "cluster": "xf6pteamwisvy-master", "host": "mq.internal", "rel": "rabbitmq", "scheme": "amqp", "port": 5672}], "database": [{"username": "user", "scheme": "mysql", "service": "mysql", "ip": "248.0.144.111", "cluster": "xf6pteamwisvy-master", "host": "database.internal", "rel": "mysql", "path": "main", "query": {"is_master": true}, "password": "", "port": 3306}]}'
-        - MAGENTO_CLOUD_RELATIONSHIPS=eyJyZWRpcyI6IFt7InNlcnZpY2UiOiAicmVkaXMiLCAiaXAiOiAiMjQ4LjAuMTQ0LjEwOSIsICJjbHVzdGVyIjogInhmNnB0ZWFtd2lzdnktbWFzdGVyIiwgImhvc3QiOiAicmVkaXMuaW50ZXJuYWwiLCAicmVsIjogInJlZGlzIiwgInNjaGVtZSI6ICJyZWRpcyIsICJwb3J0IjogNjM3OX1dLCAiZWxhc3RpY3NlYXJjaCI6IFt7InNlcnZpY2UiOiAiZWxhc3RpY3NlYXJjaCIsICJpcCI6ICIyNDguMC4xNDUuMzciLCAiY2x1c3RlciI6ICJ4ZjZwdGVhbXdpc3Z5LW1hc3RlciIsICJob3N0IjogImVsYXN0aWNzZWFyY2guaW50ZXJuYWwiLCAicmVsIjogImVsYXN0aWNzZWFyY2giLCAic2NoZW1lIjogImh0dHAiLCAicG9ydCI6IDkyMDB9XSwgIm1xIjogW3sidXNlcm5hbWUiOiAiZ3Vlc3QiLCAicGFzc3dvcmQiOiAiZ3Vlc3QiLCAic2VydmljZSI6ICJteXJhYmJpdG1xIiwgImlwIjogIjI0OC4wLjE0NC4xMTAiLCAiY2x1c3RlciI6ICJ4ZjZwdGVhbXdpc3Z5LW1hc3RlciIsICJob3N0IjogIm1xLmludGVybmFsIiwgInJlbCI6ICJyYWJiaXRtcSIsICJzY2hlbWUiOiAiYW1xcCIsICJwb3J0IjogNTY3Mn1dLCAiZGF0YWJhc2UiOiBbeyJ1c2VybmFtZSI6ICJ1c2VyIiwgInNjaGVtZSI6ICJteXNxbCIsICJzZXJ2aWNlIjogIm15c3FsIiwgImlwIjogIjI0OC4wLjE0NC4xMTEiLCAiY2x1c3RlciI6ICJ4ZjZwdGVhbXdpc3Z5LW1hc3RlciIsICJob3N0IjogImRhdGFiYXNlLmludGVybmFsIiwgInJlbCI6ICJteXNxbCIsICJwYXRoIjogIm1haW4iLCAicXVlcnkiOiB7ImlzX21hc3RlciI6IHRydWV9LCAicGFzc3dvcmQiOiAiIiwgInBvcnQiOiAzMzA2fV19
-        # '{"APPLICATION_MODE":"developer"}'
+        # - MAGENTO_CLOUD_RELATIONSHIPS=eyJyZWRpcyI6IFt7InNlcnZpY2UiOiAicmVkaXMiLCAiaXAiOiAiMjQ4LjAuMTQ0LjEwOSIsICJjbHVzdGVyIjogInhmNnB0ZWFtd2lzdnktbWFzdGVyIiwgImhvc3QiOiAicmVkaXMuaW50ZXJuYWwiLCAicmVsIjogInJlZGlzIiwgInNjaGVtZSI6ICJyZWRpcyIsICJwb3J0IjogNjM3OX1dLCAiZWxhc3RpY3NlYXJjaCI6IFt7InNlcnZpY2UiOiAiZWxhc3RpY3NlYXJjaCIsICJpcCI6ICIyNDguMC4xNDUuMzciLCAiY2x1c3RlciI6ICJ4ZjZwdGVhbXdpc3Z5LW1hc3RlciIsICJob3N0IjogImVsYXN0aWNzZWFyY2guaW50ZXJuYWwiLCAicmVsIjogImVsYXN0aWNzZWFyY2giLCAic2NoZW1lIjogImh0dHAiLCAicG9ydCI6IDkyMDB9XSwgIm1xIjogW3sidXNlcm5hbWUiOiAiZ3Vlc3QiLCAicGFzc3dvcmQiOiAiZ3Vlc3QiLCAic2VydmljZSI6ICJteXJhYmJpdG1xIiwgImlwIjogIjI0OC4wLjE0NC4xMTAiLCAiY2x1c3RlciI6ICJ4ZjZwdGVhbXdpc3Z5LW1hc3RlciIsICJob3N0IjogIm1xLmludGVybmFsIiwgInJlbCI6ICJyYWJiaXRtcSIsICJzY2hlbWUiOiAiYW1xcCIsICJwb3J0IjogNTY3Mn1dLCAiZGF0YWJhc2UiOiBbeyJ1c2VybmFtZSI6ICJ1c2VyIiwgInNjaGVtZSI6ICJteXNxbCIsICJzZXJ2aWNlIjogIm15c3FsIiwgImlwIjogIjI0OC4wLjE0NC4xMTEiLCAiY2x1c3RlciI6ICJ4ZjZwdGVhbXdpc3Z5LW1hc3RlciIsICJob3N0IjogImRhdGFiYXNlLmludGVybmFsIiwgInJlbCI6ICJteXNxbCIsICJwYXRoIjogIm1haW4iLCAicXVlcnkiOiB7ImlzX21hc3RlciI6IHRydWV9LCAicGFzc3dvcmQiOiAiIiwgInBvcnQiOiAzMzA2fV19
+        - MAGENTO_CLOUD_RELATIONSHIPS=${MAGENTO_CLOUD_RELATIONSHIPS}
         # - MAGENTO_CLOUD_VARIABLES=eyJBRE1JTl9FTUFJTCI6ImtiZW50cnVwQG1hZ2VudG8uY29tIiwiQVBQTElDQVRJT05fTU9ERSI6ImRldmVsb3BlciJ9Cg
         # '{"ADMIN_EMAIL":"kbentrup@magento.com","APPLICATION_MODE":"production"}'
-        - MAGENTO_CLOUD_VARIABLES=eyJBRE1JTl9FTUFJTCI6ImtiZW50cnVwQG1hZ2VudG8uY29tIiwiQVBQTElDQVRJT05fTU9ERSI6InByb2R1Y3Rpb24ifQo
-        # {"http:\\/\\/m2-b2b-dev.the1umastory.com\\/": {"type": "upstream","original_url": "http:\\/\\/{default}\\/"}}
-        - MAGENTO_CLOUD_ROUTES=eyJodHRwOlwvXC9tMi1iMmItZGV2LnRoZTF1bWFzdG9yeS5jb21cLyI6IHsidHlwZSI6ICJ1cHN0cmVhbSIsIm9yaWdpbmFsX3VybCI6ICJodHRwOlwvXC97ZGVmYXVsdH1cLyJ9fQo
-      env_file:
-        - env/magento-cloud-variables.ini
+        - MAGENTO_CLOUD_VARIABLES=${MAGENTO_CLOUD_VARIABLES}
+        - MAGENTO_CLOUD_ROUTES=${MAGENTO_CLOUD_ROUTES}
       ports:
         - 80
       working_dir: /app
