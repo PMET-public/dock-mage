@@ -6,9 +6,9 @@ SCRIPTS_DIR=$( cd $(dirname $0) ; pwd -P )
 
 for ini in "${SCRIPTS_DIR}"/../env/*.ini; do
   # output vars so they can exported in calling shell
-  perl -pe "s/\s*#.*//;s/^\s*$//" $ini
+  perl -pe 's/\s*#.*//;s/^\s*$//;s/\${([^:]*):-([^}]*)}/exists $ENV{$1} ? $ENV{$1} : $2/e' $ini
   # export same vars in this process so they can be used in remaining var declarations
-  export $(perl -pe "s/\s*#.*//;s/^\s*$//" $ini)
+  export $(perl -pe 's/\s*#.*//;s/^\s*$//;s/\${([^:]*):-([^}]*)}/exists $ENV{$1} ? $ENV{$1} : $2/e' $ini)
 done
 
 echo XDEBUG_REMOTE_HOST=$(docker run --rm --privileged --pid=host debian:stable-slim nsenter -t 1 -m -u -n -i sh -c "ip route|awk '/default/{print \$3}'")
