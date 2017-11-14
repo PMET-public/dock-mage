@@ -2,3 +2,4 @@
 ADMIN_USERNAME: admin
 ADMIN_PASSWORD: admin4tls
 ADMIN_EMAIL: kbentrup@magento.com
+APPLICATION_MODE: production

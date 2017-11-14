@@ -1,21 +1,13 @@
 version: '3'
 services:
 
-  nginx-proxy:
-    image: pmetpublic/nginx
-    restart: always
-    #entrypoint: env-subst.sh -- /docker-entrypoint.sh
-    ports:
-      - 80
-      - 443
-    environment:
-      - TLD=${TLD}
-      - DOMAIN=${DOMAIN}
+  nginx-rev-proxy-setup:
+    image: debian:stable-slim
+    command: /tmp/nginx-rev-proxy-setup.sh
     volumes:
-      - ./etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./etc/ssl:/etc/ssl:ro
-      - ./scripts:/usr/local/bin:ro
-      - /etc/letsencrypt:/etc/letsencrypt
+      - /usr/bin/docker:/usr/bin/docker
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./scripts/nginx-rev-proxy-setup.sh:/tmp/nginx-rev-proxy-setup.sh:ro
 
   redis:
     image: redis
@@ -28,8 +20,6 @@ services:
   db:
     image: pmetpublic/lamp-db-server:no-password
     restart: always
-    environment:
-      - DATA_DIR=${DATA_DIR}
     ports:
       - 3306
     volumes:
@@ -44,6 +34,8 @@ services:
     restart: always
     # https://github.com/magento/magento2/issues/3897
     command: -f /etc/varnish/default.vcl -p feature=+esi_ignore_https
+    ports:
+      - 80
     volumes:
       - ./etc/varnish:/etc/varnish
     networks:
@@ -68,17 +60,16 @@ services:
           - elasticsearch.internal
 
   app:
-      image: ${APP_SERVICE_IMAGE}
+      image: pmetpublic/lamp-app-server:with-blackfire
       restart: always
       command: wait-for-it.sh database.internal:3306 -- /sbin/my_init
       #command: /bin/bash
-      container_name: ${HOSTNAME}
+      container_name: ${MAGENTO_HOSTNAME}
       environment:
         - GITHUB_TOKEN=${GITHUB_TOKEN}
 #        - COMPOSER_AUTH=${COMPOSER_AUTH}
         - LANG_TO_DEPLOY=${LANG_TO_DEPLOY}
 #        - WARM_CACHE=${WARM_CACHE}
-#        - MAGE_MODE=${MAGE_MODE}
 #        - ENABLE_XDEBUG=${ENABLE_XDEBUG}
 #        - ENABLE_DI_COMPILE=${ENABLE_DI_COMPILE}
         - XDEBUG_IDEKEY=${XDEBUG_IDEKEY}
@@ -90,7 +81,6 @@ services:
         - BLACKFIRE_CLIENT_TOKEN=${BLACKFIRE_CLIENT_TOKEN}
         - BLACKFIRE_SERVER_ID=${BLACKFIRE_SERVER_ID}
         - BLACKFIRE_SERVER_TOKEN=${BLACKFIRE_SERVER_TOKEN}
-        # for compatability with MECE
         # encode: echo '{"json": "string"}' | base64
         # decode: php -r 'print_r(json_decode(base64_decode($_ENV["MAGENTO_CLOUD_RELATIONSHIPS"]))->database);'
         # '{"redis": [{"service": "redis", "ip": "248.0.144.109", "cluster": "xf6pteamwisvy-master", "host": "redis.internal", "rel": "redis", "scheme": "redis", "port": 6379}], "elasticsearch": [{"service": "elasticsearch", "ip": "248.0.145.37", "cluster": "xf6pteamwisvy-master", "host": "elasticsearch.internal", "rel": "elasticsearch", "scheme": "http", "port": 9200}], "mq": [{"username": "guest", "password": "guest", "service": "myrabbitmq", "ip": "248.0.144.110", "cluster": "xf6pteamwisvy-master", "host": "mq.internal", "rel": "rabbitmq", "scheme": "amqp", "port": 5672}], "database": [{"username": "user", "scheme": "mysql", "service": "mysql", "ip": "248.0.144.111", "cluster": "xf6pteamwisvy-master", "host": "database.internal", "rel": "mysql", "path": "main", "query": {"is_master": true}, "password": "", "port": 3306}]}'
