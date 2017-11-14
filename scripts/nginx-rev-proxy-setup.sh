@@ -20,6 +20,8 @@ for network in $(docker network ls | grep default | grep bridge | awk '{print $2
       ssl_certificate_key /etc/letsencrypt/live/$magento_hostname/privkey.pem;
       location / {
         proxy_pass http://$docker_host_ip:$varnish_port;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Forwarded-Proto \$scheme;
       }
     }
 EOF

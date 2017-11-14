@@ -1,0 +1,31 @@
+redis: 
+  - service: redis
+    host: redis.internal
+    rel: redis
+    scheme: redis
+    port: 6379
+elasticsearch: 
+  - service: elasticsearch
+    host: elasticsearch.internal
+    rel: elasticsearch
+    scheme: http
+    port: 9200
+mq:
+  - username: guest
+    password: guest
+    service: myrabbitmq
+    host: mq.internal
+    rel: rabbitmq
+    scheme: amqp
+    port: 5672
+database:
+  - username: user
+    scheme: mysql
+    service: mysql
+    host: database.internal
+    rel: mysql
+    path: main
+    query:
+      is_master: true
+    password: 
+    port: 3306
