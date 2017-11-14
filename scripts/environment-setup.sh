@@ -29,6 +29,6 @@ if docker ps --format "{{ .Names }}" | egrep -q "^${MAGENTO_HOSTNAME}\$"; then
   >&2 echo -e "\nContainer with name ${MAGENTO_HOSTNAME} already exists. If you want to create a new container, use:\n\n\e[33mexport MAGENTO_HOSTNAME=www.sample.com\e[0m"
 fi
 
-if [ ! -z "$(docker-compose ps -q)" ]; then
+if [ ! -z "$(docker-compose ps -q 2>/dev/null)" ]; then
   >&2 echo -e "\nProject with name ${COMPOSE_PROJECT_NAME} already exists. If you want to create a new project, use:\n\n\e[33mexport COMPOSE_PROJECT_NAME=myprefix\e[0m"
 fi

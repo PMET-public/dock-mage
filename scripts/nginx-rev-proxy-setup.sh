@@ -8,10 +8,12 @@ mkdir /tmp/conf.d
 
 for network in $(docker network ls | grep default | grep bridge | awk '{print $2}'); do
 
-  varnish_port=$(docker ps --filter "network=${network}" --filter "label=com.docker.compose.service=varnish" --format "{{.Ports}}" | sed 's/.*://;s/-.*//')
-  magento_hostname=$(docker ps --filter "network=${network}" --filter "label=com.docker.compose.service=app" --format "{{.Names}}")
+  varnish_port=$(docker ps -a --filter "network=${network}" --filter "label=com.docker.compose.service=varnish" --format "{{.Ports}}" | sed 's/.*://;s/-.*//')
+  magento_hostname=$(docker ps -a --filter "network=${network}" --filter "label=com.docker.compose.service=app" --format "{{.Names}}")
 
-  # write nginx conf file for each magento host
+  if [ ! -z "${magento_hostname}" -a ! -z "${magento_hostname}" ];then
+
+  echo "Writing nginx conf file for ${magento_hostname}"
   cat << EOF > /tmp/conf.d/host-$magento_hostname.conf
     server {
       listen 443 ssl http2;
@@ -25,6 +27,12 @@ for network in $(docker network ls | grep default | grep bridge | awk '{print $2
       }
     }
 EOF
+
+else
+
+  echo "Either varnish or app service not found on network ${network}. Skipping ..."
+
+fi
 
 done
 
@@ -40,6 +48,3 @@ else
   docker cp /tmp/conf.d nginx_rev_proxy:/etc/nginx/
   docker exec nginx_rev_proxy nginx -s reload
 fi
-
-
-
