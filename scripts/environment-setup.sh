@@ -20,7 +20,7 @@ echo MAGENTO_CLOUD_VARIABLES=$(cat "${SCRIPTS_DIR}"/../env/MAGENTO_CLOUD_VARIABL
   base64)
 
 echo MAGENTO_CLOUD_ROUTES=$(cat "${SCRIPTS_DIR}"/../../../../.magento/routes.yaml |
-  perl -pe 's/{default}\/":/exists $ENV{"MAGENTO_HOSTNAME"} ? $ENV{"MAGENTO_HOSTNAME"}."/\":" : die "HOSTNAME undefined"/ge' |
+  perl -pe 's/{default}\/":/exists $ENV{"MAGENTO_HOSTNAME"} ? $ENV{"MAGENTO_HOSTNAME"}."\/\":" : die "HOSTNAME undefined"/ge' |
   python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' |
   base64)
 
