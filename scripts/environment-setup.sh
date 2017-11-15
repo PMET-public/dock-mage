@@ -27,7 +27,7 @@ echo MAGENTO_CLOUD_ROUTES=$(echo "${tmp_yaml}" |
   base64)
 
 
-if [ ! -z "$(docker ps -qa --filter 'name=^/${MAGENTO_HOSTNAME}\$')" ]; then
+if [ ! -z "$(docker ps -qa --filter "name=^/${MAGENTO_HOSTNAME}\$")" ]; then
   >&2 echo -e "\nContainer with name ${MAGENTO_HOSTNAME} already exists. If you want to create a new container, use:\n\n\e[33mexport MAGENTO_HOSTNAME=www.sample.com\e[0m"
 fi
 
