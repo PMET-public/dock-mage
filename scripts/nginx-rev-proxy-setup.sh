@@ -38,7 +38,7 @@ done
 
 
 # if running nginx proxy does not exist, create it, copy over conf, and start it
-if [ -z $(docker ps -qa --filter "name=nginx-rev-proxy") ]; then
+if [ -z $(docker ps -qa --filter 'name=^/nginx-rev-proxy$') ]; then
   docker create --name nginx-rev-proxy --hostname nginx-rev-proxy  -v /etc/letsencrypt:/etc/letsencrypt -p 443:443 pmetpublic/nginx
   docker cp /tmp/conf.d nginx-rev-proxy:/etc/nginx/
   docker start nginx-rev-proxy
