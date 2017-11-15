@@ -13,7 +13,7 @@ elasticsearch:
 mq:
   - username: guest
     password: guest
-    service: myrabbitmq
+    service: rabbitmq
     host: mq.internal
     rel: rabbitmq
     scheme: amqp
