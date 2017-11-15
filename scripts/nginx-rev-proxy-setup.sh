@@ -11,7 +11,7 @@ for network in $(docker network ls | grep default | grep bridge | awk '{print $2
   varnish_port=$(docker ps -a --filter "network=${network}" --filter "label=com.docker.compose.service=varnish" --format "{{.Ports}}" | sed 's/.*://;s/-.*//')
   magento_hostname=$(docker ps -a --filter "network=${network}" --filter "label=com.docker.compose.service=app" --format "{{.Names}}")
 
-  if [ ! -z "${magento_hostname}" -a ! -z "${magento_hostname}" ];then
+  if [ ! -z "${varnish_port}" -a ! -z "${magento_hostname}" ];then
 
   echo "Writing nginx conf file for ${magento_hostname}"
   cat << EOF > /tmp/conf.d/host-$magento_hostname.conf
