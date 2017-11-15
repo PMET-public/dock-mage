@@ -19,7 +19,9 @@ echo MAGENTO_CLOUD_VARIABLES=$(cat "${SCRIPTS_DIR}"/../env/MAGENTO_CLOUD_VARIABL
   python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' |
   base64)
 
-echo MAGENTO_CLOUD_ROUTES=$(cat "${SCRIPTS_DIR}"/../../../../.magento/routes.yaml |
+# need to append original url b/c deploy scripts expecting this value in MAGENTO_CLOUD_ROUTES but it's not a recognized key in .magento/routes.yaml
+tmp_yaml=$(cat "${SCRIPTS_DIR}"/../../../../.magento/routes.yaml <(echo '    original_url: "https://{default}/"'))
+echo MAGENTO_CLOUD_ROUTES=$(echo "${tmp_yaml}" |
   perl -pe 's/{default}\/":/exists $ENV{"MAGENTO_HOSTNAME"} ? $ENV{"MAGENTO_HOSTNAME"}."\/\":" : die "HOSTNAME undefined"/ge' |
   python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' |
   base64)
