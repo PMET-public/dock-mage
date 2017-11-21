@@ -9,11 +9,11 @@ for ini in "${SCRIPTS_DIR}"/../env/*.ini; do
   export $(perl -pe 's/\s*#.*//;s/^\s*$//;s/\${([^:]*):-([^}]*)}/exists $ENV{$1} ? $ENV{$1} : $2/e' $ini)
 done
 
+export XDEBUG_REMOTE_HOST=$(docker run --rm --privileged --pid=host debian:stable-slim nsenter -t 1 -m -u -n -i sh -c "ip route|awk '/default/{print \$3}'")
 
 perl -pe 's/\${([^}]*)}/exists $ENV{$1} ? $ENV{$1} : ""/ge' "${SCRIPTS_DIR}"/../etc/blackfire/agent.template > "${SCRIPTS_DIR}"/../etc/blackfire/agent
 perl -pe 's/\${([^}]*)}/exists $ENV{$1} ? $ENV{$1} : ""/ge' "${SCRIPTS_DIR}"/../etc/php/blackfire.ini.template > "${SCRIPTS_DIR}"/../etc/php/blackfire.ini
-
-echo XDEBUG_REMOTE_HOST=$(docker run --rm --privileged --pid=host debian:stable-slim nsenter -t 1 -m -u -n -i sh -c "ip route|awk '/default/{print \$3}'")
+perl -pe 's/\${([^}]*)}/exists $ENV{$1} ? $ENV{$1} : ""/ge' "${SCRIPTS_DIR}"/../etc/php/xdebug.ini.template > "${SCRIPTS_DIR}"/../etc/php/xdebug.ini
 
 echo MAGENTO_CLOUD_RELATIONSHIPS=$(cat "${SCRIPTS_DIR}"/../env/MAGENTO_CLOUD_RELATIONSHIPS.yaml |
   python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' |
