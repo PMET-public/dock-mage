@@ -77,10 +77,6 @@ services:
         - XDEBUG_REMOTE_HOST=${XDEBUG_REMOTE_HOST}
 #        - GMAIL_USERNAME_FOR_SSMTP=${GMAIL_USERNAME_FOR_SSMTP}
 #        - GMAIL_PASSWORD_FOR_SSMTP=${GMAIL_PASSWORD_FOR_SSMTP}
-        - BLACKFIRE_CLIENT_ID=${BLACKFIRE_CLIENT_ID}
-        - BLACKFIRE_CLIENT_TOKEN=${BLACKFIRE_CLIENT_TOKEN}
-        - BLACKFIRE_SERVER_ID=${BLACKFIRE_SERVER_ID}
-        - BLACKFIRE_SERVER_TOKEN=${BLACKFIRE_SERVER_TOKEN}
         - MAGENTO_CLOUD_RELATIONSHIPS=${MAGENTO_CLOUD_RELATIONSHIPS}
         - MAGENTO_CLOUD_VARIABLES=${MAGENTO_CLOUD_VARIABLES}
         - MAGENTO_CLOUD_ROUTES=${MAGENTO_CLOUD_ROUTES}
@@ -92,16 +88,15 @@ services:
         - ./etc/cron.d/magento:/etc/cron.d/magento
         - ./etc/apache2/sites-enabled:/etc/apache2/sites-enabled
         # map php ini settings to cli and apache dirs
-        - ./etc/php/7.0/templates:/etc/php/7.0/apache2/conf.d/templates
-        - ./etc/php/7.0/apache2/conf.d/apache2.ini:/etc/php/7.0/apache2/conf.d/apache2.ini
-        - ./etc/php/7.0/opcache.ini:/etc/php/7.0/apache2/conf.d/opcache.ini
-        - ./etc/php/7.0/templates:/etc/php/7.0/cli/conf.d/templates
-        - ./etc/php/7.0/cli/conf.d/cli.ini:/etc/php/7.0/cli/conf.d/cli.ini
-        - ./etc/php/7.0/opcache.ini:/etc/php/7.0/cli/conf.d/opcache.ini
-        - ./etc/blackfire/templates:/etc/blackfire/templates
+        - ./etc/php/apache2.ini:/etc/php/7.0/apache2/conf.d/apache2.ini
+        - ./etc/php/cli.ini:/etc/php/7.0/cli/conf.d/cli.ini
+        - ./etc/php/opcache.ini:/etc/php/7.0/cli/conf.d/opcache.ini
+        - ./etc/php/opcache.ini:/etc/php/7.0/apache2/conf.d/opcache.ini
+        - ./etc/php/blackfire.ini:/etc/php/7.0/apache2/conf.d/blackfire.ini
+        - ./etc/php/blackfire.ini:/etc/php/7.0/cli/conf.d/blackfire.ini
+        - ./etc/blackfire/agent:/etc/blackfire/agent
         - ../../..:/app
         - /dev/null:/usr/sbin/ssmtp
-        - /dev/null:/etc/my_init.d/blackfire.sh
       networks:
         default:
           aliases:
