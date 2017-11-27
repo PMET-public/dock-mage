@@ -1,4 +1,9 @@
 .DS_STORE
 .idea
 *.pem
+
+# output from template files
 private.ini
+etc/php/blackfire.ini
+etc/php/xdebug.ini
+etc/blackfire/agent
