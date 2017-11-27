@@ -10,6 +10,8 @@ for ini in "${SCRIPTS_DIR}"/../env/*.ini; do
 done
 
 export XDEBUG_REMOTE_HOST=$(docker run --rm --privileged --pid=host debian:stable-slim nsenter -t 1 -m -u -n -i sh -c "ip route|awk '/default/{print \$3}'")
+echo COMPOSE_PROJECT_NAME=$( [[ -n "${COMPOSE_PROJECT_NAME}" ]] && echo "${COMPOSE_PROJECT_NAME}" || basename $(cd "${SCRIPTS_DIR}"/../../../.. && pwd) )
+
 
 perl -pe 's/\${([^}]*)}/exists $ENV{$1} ? $ENV{$1} : ""/ge' "${SCRIPTS_DIR}"/../etc/blackfire/agent.template > "${SCRIPTS_DIR}"/../etc/blackfire/agent
 perl -pe 's/\${([^}]*)}/exists $ENV{$1} ? $ENV{$1} : ""/ge' "${SCRIPTS_DIR}"/../etc/php/blackfire.ini.template > "${SCRIPTS_DIR}"/../etc/php/blackfire.ini
