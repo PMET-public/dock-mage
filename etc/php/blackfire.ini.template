@@ -1,5 +1,5 @@
 [blackfire]
-extension=blackfire.so
+;extension=blackfire.so
 ; On Windows use the following configuration:
 ; extension=php_blackfire.dll
 ; Sets the socket where the agent is listening.
