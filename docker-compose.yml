@@ -81,6 +81,7 @@ services:
         - MAGENTO_CLOUD_BRANCH=${MAGENTO_CLOUD_BRANCH}
         - MAGENTO_CLOUD_TREE_ID=${MAGENTO_CLOUD_TREE_ID}
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+        - HOME=/app
       ports:
         - 80
       working_dir: /app
