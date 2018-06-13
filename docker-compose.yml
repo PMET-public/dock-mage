@@ -87,7 +87,7 @@ services:
       working_dir: /app
       volumes:
         # - ${HOME}/.composer:${HOME}/.composer
-        - ./etc/cron.d/magento:/etc/cron.d/magento
+        # - ./etc/cron.d/magento:/etc/cron.d/magento
         - ./etc/apache2/sites-enabled:/etc/apache2/sites-enabled
         # map php ini settings to cli and apache dirs
         - ./etc/php/apache2.ini:/etc/php/7.0/apache2/conf.d/apache2.ini
