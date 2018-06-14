@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# stop on errors
+set -e
+# turn on debugging
+set -x
 
 docker_host_ip=$(docker run --rm --privileged --pid=host debian:stable-slim nsenter -t 1 -m -u -n -i sh -c "ip route|awk '/default/{print \$3}'")
 
@@ -44,7 +48,7 @@ if [ -z $(docker ps -qa --filter 'name=^/nginx-rev-proxy$') ]; then
   docker start nginx-rev-proxy
 else
   # else remove old, copy new, and reload config
-  docker exec nginx-rev-proxy rm /etc/nginx/conf.d/host-*.conf
+  docker exec nginx-rev-proxy rm /etc/nginx/conf.d/host-*.conf || :
   docker cp /tmp/conf.d nginx-rev-proxy:/etc/nginx/
   docker exec nginx-rev-proxy nginx -s reload
 fi
