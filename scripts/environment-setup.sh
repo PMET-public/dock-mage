@@ -2,6 +2,9 @@
 
 SCRIPTS_DIR=$( cd $(dirname $0) ; pwd -P )
 
+if ! ( pip freeze | grep -q PyYAML) ; then
+  echo "Please install PyYAML before continuing ..." && exit 1
+fi
 
 # if a value is echoed, it's for use in the calling env
 # if a value is exported, it's to be used in the docker-compose.yml
