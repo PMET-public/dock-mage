@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# stop on errors
+set -e
+
 SCRIPTS_DIR=$( cd $(dirname $0) ; pwd -P )
 
 if ! ( pip freeze | grep -q PyYAML) ; then
@@ -9,11 +12,15 @@ fi
 # if a value is echoed, it's for use in the calling env
 # if a value is exported, it's to be used in the docker-compose.yml
 
+interpolate_ini() {
+  perl -pe 's/\s*#.*//;s/^\s*$//;s/\${([^:]*):-([^}]*)}/exists $ENV{$1} && $ENV{$1} ne "" ? $ENV{$1} : $2/e' $@
+}
+
 for ini in "${SCRIPTS_DIR}"/../env/*.ini; do
   # output vars so they can exported in calling shell
-  perl -pe 's/\s*#.*//;s/^\s*$//;s/\${([^:]*):-([^}]*)}/exists $ENV{$1} ? $ENV{$1} : $2/e' $ini
+  interpolate_ini $ini
   # export same vars in this process so they can be used in remaining var declarations
-  export $(perl -pe 's/\s*#.*//;s/^\s*$//;s/\${([^:]*):-([^}]*)}/exists $ENV{$1} ? $ENV{$1} : $2/e' $ini)
+  export $(interpolate_ini $ini)
 done
 
 export XDEBUG_REMOTE_HOST=$(docker run --rm --privileged --pid=host debian:stable-slim nsenter -t 1 -m -u -n -i sh -c "ip route|awk '/default/{print \$3}'")
@@ -46,9 +53,9 @@ echo MAGENTO_CLOUD_ROUTES=$(echo "${tmp_yaml}" |
   base64)
 
 if [ ! -z "$(docker ps -qa --filter "name=^/${MAGENTO_HOSTNAME}\$")" ]; then
-  >&2 echo -e "\nContainer with name ${MAGENTO_HOSTNAME} already exists. If you want to create a new container, use:\n\n\e[33mexport MAGENTO_HOSTNAME=www.sample.com\e[0m"
+  >&2 echo -e "\nContainer with name ${MAGENTO_HOSTNAME} already exists. If you want to create a new container, use:\n\n\033[33mexport MAGENTO_HOSTNAME=www.sample.com\033[0m"
 fi
 
 if [ ! -z "$(docker-compose ps -q 2>/dev/null)" ]; then
-  >&2 echo -e "\nProject with name ${COMPOSE_PROJECT_NAME} already exists. If you want to create a new project, use:\n\n\e[33mexport COMPOSE_PROJECT_NAME=myprefix\e[0m"
+  >&2 echo -e "\nProject with name ${COMPOSE_PROJECT_NAME} already exists. If you want to create a new project, use:\n\n\033[33mexport COMPOSE_PROJECT_NAME=myprefix\033[0m"
 fi
