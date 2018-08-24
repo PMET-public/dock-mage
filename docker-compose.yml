@@ -99,11 +99,48 @@ services:
         - ./etc/php/xdebug.ini:/etc/php/7.0/apache2/conf.d/xdebug.ini
         - ./etc/php/xdebug.ini:/etc/php/7.0/cli/conf.d/xdebug.ini
         - ./etc/blackfire/agent:/etc/blackfire/agent
-        - ../../..:/app
+        - "mynfs:/app"
         - /dev/null:/usr/sbin/ssmtp
+        - /app/generated
+        - /app/static
+        - /app/var
       networks:
         default:
           aliases:
             - app.internal
       cap_add:
         - ALL
+
+  sshfwder1:
+    container_name: sshfwder1
+    image: phusion/baseimage:0.11
+    volumes:
+      - "myssh:/tmp"
+    ports:
+      - "10022:22"
+    command: bash -c "rm -f /etc/service/sshd/down;
+      /sbin/my_init --enable-insecure-key;"
+    environment:
+      - SSH_AUTH_SOCK=/tmp/ssh-agent.sock
+
+  sshfwder2:
+    container_name: sshfwder2
+    image: khb/baseimage
+    volumes:
+      - "myssh:/myssh"
+    ports:
+      - "10023:22"
+    command: /sbin/my_init --enable-insecure-key
+    environment:
+      - SSH_AUTH_SOCK=/myssh/ssh-agent.sock
+
+
+volumes:
+  mynfs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3,noatime,nodiratime,relatime
+      device: ":${PWD}"
+
+  myssh:
