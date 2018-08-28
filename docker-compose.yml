@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 services:
 
   nginx-rev-proxy-setup:
@@ -110,6 +110,8 @@ services:
             - app.internal
       cap_add:
         - ALL
+      configs:
+        - my_config
 
   sshfwder1:
     container_name: sshfwder1
@@ -144,3 +146,8 @@ volumes:
       device: ":${PWD}"
 
   myssh:
+
+
+configs:
+  my_config:
+    file: ./etc/php/blackfire.ini
