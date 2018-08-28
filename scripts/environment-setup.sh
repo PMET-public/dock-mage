@@ -16,6 +16,10 @@ interpolate_ini() {
   perl -pe 's/\s*#.*//;s/^\s*$//;s/\${([^:]*):-([^}]*)}/exists $ENV{$1} && $ENV{$1} ne "" ? $ENV{$1} : $2/e' $@
 }
 
+if [ ! -f "${SCRIPTS_DIR}"/../env/private.ini ]; then 
+  cp "${SCRIPTS_DIR}"/../env/private.ini.template "${SCRIPTS_DIR}"/../env/private.ini
+fi
+
 for ini in "${SCRIPTS_DIR}"/../env/*.ini; do
   # output vars so they can exported in calling shell
   interpolate_ini $ini
