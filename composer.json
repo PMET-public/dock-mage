@@ -10,11 +10,5 @@
     ],
     "bin": [
         "bin/dock-mage.sh"
-    ],
-    "repositories": [
-        {"type": "git", "url": "git@github.com:PMET-public/nfs4d4m.git"}
-    ],
-    "require": {
-        "magentoese/nfs4d4m" : "dev-master"
-    }
+    ]
 }
