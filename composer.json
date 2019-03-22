@@ -9,6 +9,6 @@
         }
     ],
     "bin": [
-        "bin/dock-mage.sh"
+        "scripts/dock-mage.sh"
     ]
 }
