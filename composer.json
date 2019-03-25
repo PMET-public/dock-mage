@@ -8,5 +8,7 @@
             "email": "kbentrup@magento.com"
         }
     ],
-    "require": {}
+    "bin": [
+        "scripts/dock-mage.sh"
+    ]
 }
