@@ -7,8 +7,7 @@ set -x
 
 docker_host_ip=$(docker run --rm --privileged --pid=host debian:stable-slim nsenter -t 1 -m -u -n -i sh -c "ip route|awk '/default/{print \$3}'")
 
-
-mkdir /tmp/conf.d
+mkdir /tmp/conf.d || :
 
 for network in $(docker network ls | grep default | grep bridge | awk '{print $2}'); do
 
