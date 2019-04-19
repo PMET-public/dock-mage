@@ -17,7 +17,7 @@ if [[
   "${COMPOSE_FILE}" != "${full_path}/vendor/magentoese/dock-mage/docker-compose.yml" ||
   "${COMPOSE_PROJECT_NAME}" != "${mhost}" 
 ]]; then
-  echo -e "Before continuing, please run:\n\033[32mexport COMPOSE_PROJECT_NAME=\"${dir_name}\" \\ \nCOMPOSE_FILE=\"${full_path}/vendor/magentoese/dock-mage/docker-compose.yml\" \\ \nmhost=\"${dir_name}\"\033[0m"
+  echo -e "Before continuing, please run:\n\033[32mexport COMPOSE_PROJECT_NAME=\"${dir_name}\" COMPOSE_FILE=\"${full_path}/vendor/magentoese/dock-mage/docker-compose.yml\" mhost=\"${dir_name}\"\033[0m"
   exit
 fi
 exit
