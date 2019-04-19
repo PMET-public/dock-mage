@@ -65,8 +65,8 @@ services:
           - elasticsearch.internal
 
   app:
-      container_name: ${MAGENTO_HOSTNAME}
-      hostname: ${MAGENTO_HOSTNAME}
+      container_name: ${mhost}
+      hostname: ${mhost}
       image: pmetpublic/lamp-app-server:with-blackfire
       restart: always
       environment:
@@ -111,30 +111,6 @@ services:
       cap_add:
         - ALL
 
-  sshfwder1:
-    container_name: sshfwder1
-    image: phusion/baseimage:0.11
-    volumes:
-      - "myssh:/tmp"
-    ports:
-      - "10022:22"
-    command: bash -c "rm -f /etc/service/sshd/down;
-      /sbin/my_init --enable-insecure-key;"
-    environment:
-      - SSH_AUTH_SOCK=/tmp/ssh-agent.sock
-
-  sshfwder2:
-    container_name: sshfwder2
-    image: khb/baseimage
-    volumes:
-      - "myssh:/myssh"
-    ports:
-      - "10023:22"
-    command: /sbin/my_init --enable-insecure-key
-    environment:
-      - SSH_AUTH_SOCK=/myssh/ssh-agent.sock
-
-
 volumes:
   mynfs:
     driver: local
@@ -142,5 +118,3 @@ volumes:
       type: nfs
       o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3,noatime,nodiratime,relatime
       device: ":${PWD}"
-
-  myssh:
