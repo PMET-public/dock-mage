@@ -20,7 +20,7 @@ if [[
   echo -e "Before continuing, please run:\n\033[32mexport COMPOSE_PROJECT_NAME=\"${dir_name}\" COMPOSE_FILE=\"${full_path}/vendor/magentoese/dock-mage/docker-compose.yml\" mhost=\"${dir_name}\"\033[0m"
   exit
 fi
-exit
+
 if ! ( pip3 freeze | grep -q PyYAML) ; then
   echo "Please ensure you have python3, pip3, and PyYAML before continuing ..." && exit 1
 fi
@@ -43,8 +43,6 @@ for ini in "${SCRIPTS_DIR}"/../env/*.ini; do
   # export same vars in this process so they can be used in remaining var declarations
   export $(interpolate_ini $ini)
 done
-
-
 
 # write config files with exported env vars if defined
 perl -pe 's/\${([^}]*)}/exists $ENV{$1} ? $ENV{$1} : ""/ge' "${SCRIPTS_DIR}"/../etc/blackfire/agent.template > "${SCRIPTS_DIR}"/../etc/blackfire/agent
