@@ -6,6 +6,7 @@ set -e
 set -x
 
 docker_host_ip=$(docker run --rm --privileged --pid=host debian:stable-slim nsenter -t 1 -m -u -n -i sh -c "ip route|awk '/default/{print \$3}'")
+docker_host_ip=127.0.0.1
 
 mkdir /tmp/conf.d || :
 
@@ -24,7 +25,8 @@ for network in $(docker network ls | grep default | grep bridge | awk '{print $2
       ssl_certificate /etc/letsencrypt/live/$magento_hostname/fullchain.pem;
       ssl_certificate_key /etc/letsencrypt/live/$magento_hostname/privkey.pem;
       location / {
-        proxy_pass http://$docker_host_ip:$varnish_port;
+        # proxy_pass http://$docker_host_ip:$varnish_port;
+        proxy_pass http://172.18.0.4;
         proxy_set_header Host \$host;
         proxy_set_header X-Forwarded-Proto \$scheme;
       }
@@ -42,7 +44,7 @@ done
 
 # if running nginx proxy does not exist, create it, copy over conf, and start it
 if [ -z $(docker ps -qa --filter 'name=^/nginx-rev-proxy$') ]; then
-  docker create --name nginx-rev-proxy --hostname nginx-rev-proxy  -v /etc/letsencrypt:/etc/letsencrypt -p 443:443 pmetpublic/nginx
+  docker create --name nginx-rev-proxy --hostname nginx-rev-proxy  -v /private/etc/letsencrypt:/etc/letsencrypt -p 443:443 --network ref1the1umastorycom_default pmetpublic/nginx
   docker cp /tmp/conf.d nginx-rev-proxy:/etc/nginx/
   docker start nginx-rev-proxy
 else

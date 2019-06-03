@@ -48,7 +48,7 @@ services:
 
   mq:
     hostname: mq
-    image: rabbitmq:3.6.12
+    image: rabbitmq:5.2.12
     restart: always
     networks:
       default:
